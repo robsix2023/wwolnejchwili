@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>W wolnej chwili</title>
-  <link rel="stylesheet" href="[unpkg.com](https://unpkg.com/leaflet/dist/leaflet.css)"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
     /* 🔧 RESET */
@@ -21,11 +21,31 @@
     }
 
     /* 🔝 TOPBAR */
-    .topbar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+   .topbar {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 14px 20px;
+
+  background: rgba(255,255,255,0.92);
+
+  backdrop-filter: blur(16px);
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1500;
+
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
       gap: 20px;
       padding: 14px 20px;
       background: rgba(255,255,255,0.92);
@@ -258,19 +278,28 @@
 
     /* ⚪ STOPKA */
     #footer {
-      width: calc(100% - 32px);
-      margin: 0 auto 12px;
-      padding: 18px;
-      text-align: center;
-      background: white;
-      color: #6b7280;
-      font-size: 13px;
-      border-radius: 20px;
-      border-top: 1px solid rgba(0,0,0,0.06);
-      position: relative;
-      z-index: 2;
-    }
+  width: calc(100% - 32px);
 
+  margin: 0 auto 120px;
+
+  padding: 18px;
+
+  text-align: center;
+
+  background: white;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+  border-radius: 20px;
+
+  border-top: 1px solid rgba(0,0,0,0.06);
+
+  position: relative;
+
+  z-index: 2;
+}
     /* 💻 TABLET / LAPTOP */
     @media (min-width: 768px) {
       #map {
@@ -363,8 +392,8 @@
         ⛰️ 240 m przewyższenia
       </p>
       <div class="gallery">
-        <img src="[picsum.photos](https://picsum.photos/600/400)" alt="Zdjęcie trasy">
-        <img src="[picsum.photos](https://picsum.photos/601/400)" alt="Zdjęcie trasy">
+        <img src="https://picsum.photos/600/400" alt="Zdjęcie trasy">
+        <img src="https://picsum.photos/601/400" alt="Zdjęcie trasy">
       </div>
       <p>
         Tutaj będzie opis trasy.
@@ -464,7 +493,7 @@
     const handle = document.getElementById("handle");
 
     handle.addEventListener("click", () => {
-      panel.classList.toggle("open");
+      panel.classList.toggle("open");  setTimeout(() => {   map.invalidateSize(); }, 400);
     });
 
     // Obsługa gestu swipe
@@ -512,8 +541,8 @@
           renderMarkers(filtered);
         }
 
-        // Toggle panelu filtrów
-        document.getElementById("filterPanel").classList.toggle("open");
+        // Otwórz panel filtrów
+document.getElementById("filterPanel").classList.add("open");
       });
     });
   </script>
