@@ -27,22 +27,22 @@
   <!-- tekst -->
   <text x="280"
         y="110"
-        font-size="54"
+        font-size="60"
         font-family="Arial"
         font-weight="bold"
         fill="#0f3d2e">
 
-    w wolnej chwili
+    W wolnej chwili
 
   </text>
 
   <text x="282"
         y="155"
-        font-size="24"
+        font-size="32"
         font-family="Arial"
         fill="#2f855a">
 
-    trasy • rower • bieganie
+    Trasy • Rower • Bieganie
 
   </text>
 
