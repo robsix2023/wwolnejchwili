@@ -68,7 +68,7 @@ margin: 0;
 
   overflow-x: auto;
 
-  justify-content: flex-end;
+  justify-content: center;
 
   flex: 1;
 }
@@ -97,7 +97,83 @@ margin: 0;
   transition: 0.2s;
 }
 
-.filter:hover {
+.filter:hover 
+  {
+  transform: translateY(-2px);
+
+  background: white;
+}
+  /* 🔽 PANEL FILTRÓW */
+#filterPanel {
+
+  width: calc(100% - 32px);
+
+  max-width: 900px;
+
+  margin: 0 auto;
+
+  max-height: 0;
+
+  overflow: hidden;
+
+  transition: 0.35s ease;
+
+}
+
+/* OTWARTY */
+#filterPanel.open {
+  max-height: 300px;
+
+  margin-top: 12px;
+}
+
+/* ZAWARTOŚĆ */
+.filterContent {
+
+  background:
+    rgba(255,255,255,0.82);
+
+  backdrop-filter: blur(18px);
+
+  border-radius: 28px;
+
+  padding: 18px;
+
+  border:
+    1px solid rgba(255,255,255,0.6);
+
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.10);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+/* ITEM */
+.filterItem {
+
+  padding: 16px;
+
+  border-radius: 18px;
+
+  background:
+    rgba(255,255,255,0.7);
+
+  border:
+    1px solid rgba(0,0,0,0.05);
+
+  font-weight: 600;
+
+  transition: 0.2s;
+
+  cursor: pointer;
+}
+
+.filterItem:hover {
+
   transform: translateY(-2px);
 
   background: white;
@@ -381,10 +457,39 @@ margin: 0;
 
   <!-- FILTRY -->
   <div id="filters">
+
     <div class="filter">🚴 Rower</div>
+
     <div class="filter">🏃 Bieganie</div>
+
     <div class="filter">👶 Z dzieckiem</div>
+
   </div>
+
+</div>
+
+<!-- 🔽 PANEL FILTRA -->
+<div id="filterPanel">
+
+  <div class="filterContent">
+
+    <div class="filterItem">item1</div>
+
+    <div class="filterItem">item2</div>
+
+    <div class="filterItem">item3</div>
+
+  </div>
+
+</div>
+  <!-- FILTRY -->
+<div id="filters">
+
+  <div class="filter">🚴 Rower</div>
+
+  <div class="filter">🏃 Bieganie</div>
+
+  <div class="filter">👶 Z dzieckiem</div>
 
 </div>
 
@@ -511,7 +616,22 @@ handle.addEventListener("click", () => {
   panel.classList.toggle("open");
 
 });
+/* 🔽 PANEL FILTRÓW */
 
+const filters = document.querySelectorAll(".filter");
+
+filters.forEach(filter => {
+
+  filter.addEventListener("click", () => {
+
+    document
+      .getElementById("filterPanel")
+      .classList
+      .toggle("open");
+
+  });
+
+});
  
 
 </script>
