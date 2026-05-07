@@ -7,47 +7,59 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
+
+/* 🔧 RESET */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #f4f4f4;
+  overflow-x: hidden;
 }
 
-/* 🔝 LOGO */
-#logo {
-  text-align: center;
-  padding: 20px 10px 10px;
+/* 🔝 LOGO WRAPPER */
+.logo-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: white;
+  padding: 20px 16px 10px;
 }
 
-#logo h1 {
-  margin: 0;
-  font-size: 24px;
-}
-
-#logo p {
-  margin: 5px 0 0;
-  color: #666;
+/* 🖼️ LOGO */
+.logo {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  display: block;
 }
 
 /* 🧭 FILTRY */
 #filters {
   display: flex;
   gap: 8px;
-  padding: 10px;
+  padding: 10px 16px;
   justify-content: center;
   background: white;
+  overflow-x: auto;
 }
 
 .filter {
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: #eee;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* 🗺️ MAPA */
 #map {
+  width: 100%;
   height: 55vh;
 }
 
@@ -55,19 +67,22 @@ body {
 #panel {
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   height: 120px;
   background: white;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.2);
   transition: 0.3s;
-  overflow: hidden;
+  overflow-y: auto;
+  z-index: 1000;
 }
 
 #panel.open {
-  height: 65%;
+  height: 65vh;
 }
 
+/* 👆 UCHWYT */
 #handle {
   width: 40px;
   height: 5px;
@@ -77,27 +92,34 @@ body {
 }
 
 #panelContent {
-  padding: 10px;
+  padding: 12px 16px 20px;
+}
+
+#panel img {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
 }
 
 /* 🧩 PRZYCISKI */
 .btn {
   display: block;
-  padding: 10px;
-  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
   text-align: center;
-  background: black;
+  background: #111;
   color: white;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-weight: bold;
 }
 
-/* 📄 SZCZEGÓŁY (ukryte na start) */
+/* 📄 SZCZEGÓŁY */
 #details {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   background: white;
@@ -107,17 +129,70 @@ body {
 
 #details header {
   padding: 15px;
-  background: #eee;
+  background: #f0f0f0;
+  position: sticky;
+  top: 0;
+}
+
+#details header button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
 }
 
 #detailsContent {
-  padding: 15px;
+  padding: 16px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
 .gallery img {
   width: 100%;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+/* 💻 TABLET / LAPTOP */
+@media (min-width: 768px) {
+
+  #map {
+    height: 65vh;
+  }
+
+  #panel {
+    width: 420px;
+    right: 20px;
+    left: auto;
+    bottom: 20px;
+    border-radius: 24px;
+  }
+
+  #panel.open {
+    height: 70vh;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+/* 🖥️ DUŻE EKRANY */
+@media (min-width: 1200px) {
+
+  .logo {
+    max-width: 650px;
+  }
+
+  #map {
+    height: 72vh;
+  }
+
 }
 
 </style>
@@ -125,10 +200,9 @@ body {
 
 <body>
 
-<!-- 🔝 LOGO -->
-<div id="logo">
-  <h1>W wolnej chwili</h1>
-  <p>trasy na rower, bieganie i wolny czas</p>
+<!-- 🔝 LOGO SVG -->
+<div class="logo-wrapper">
+  <img src="logo.svg" alt="W wolnej chwili" class="logo">
 </div>
 
 <!-- 🧭 FILTRY -->
@@ -144,6 +218,7 @@ body {
 <!-- 📦 PANEL -->
 <div id="panel">
   <div id="handle"></div>
+
   <div id="panelContent">
     <p>Kliknij trasę na mapie</p>
   </div>
@@ -151,31 +226,43 @@ body {
 
 <!-- 📄 SZCZEGÓŁY -->
 <div id="details">
+
   <header>
     <button onclick="closeDetails()">⬅ Wróć</button>
   </header>
 
   <div id="detailsContent">
+
     <h2>Nazwa trasy</h2>
-    <p>📏 km | ⛰️ przewyższenie</p>
+
+    <p>
+      📏 42 km <br>
+      ⛰️ 240 m przewyższenia
+    </p>
 
     <div class="gallery">
-      <img src="https://picsum.photos/400/200">
-      <img src="https://picsum.photos/400/201">
+      <img src="https://picsum.photos/600/400">
+      <img src="https://picsum.photos/601/400">
     </div>
 
     <p>
-      Tutaj będzie opis trasy. Możesz wpisać dowolny tekst,
-      wskazówki, atrakcje itd.
+      Tutaj będzie opis trasy.
+      Możesz wkleić informacje o atrakcjach,
+      nawierzchni, rodzinnych miejscach,
+      punktach widokowych itd.
     </p>
 
     <a class="btn">Pobierz GPX</a>
+
   </div>
+
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
+
+/* 🗺️ START MAPY */
 var map = L.map('map').setView([50.06, 19.94], 10);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
@@ -189,44 +276,57 @@ const trasy = [
     lng: 20.22,
     km: 42,
     elevation: 240,
-    img: "https://picsum.photos/400/200"
+    img: "https://picsum.photos/600/300"
   }
 ];
 
 /* 📍 MARKERY */
 trasy.forEach(t => {
+
   let marker = L.marker([t.lat, t.lng]).addTo(map);
 
   marker.on('click', () => {
     showPanel(t);
   });
+
 });
 
 /* 📦 PANEL */
 function showPanel(t) {
+
   const panel = document.getElementById("panel");
   const content = document.getElementById("panelContent");
 
   content.innerHTML = `
     <h3>${t.name}</h3>
-    <p>${t.km} km | ${t.elevation} m</p>
-    <img src="${t.img}" width="100%" style="border-radius:10px;">
-    <a class="btn" onclick="openDetails()">Zobacz szczegóły</a>
+
+    <p>
+      📏 ${t.km} km <br>
+      ⛰️ ${t.elevation} m
+    </p>
+
+    <img src="${t.img}">
+
+    <a class="btn" onclick="openDetails()">
+      Zobacz szczegóły
+    </a>
   `;
 
   panel.classList.add("open");
+
 }
 
-/* 📄 SZCZEGÓŁY */
+/* 📄 OTWÓRZ SZCZEGÓŁY */
 function openDetails() {
   document.getElementById("details").style.display = "block";
 }
 
+/* ❌ ZAMKNIJ SZCZEGÓŁY */
 function closeDetails() {
   document.getElementById("details").style.display = "none";
 }
 
-/* 👆 PANEL toggle */
+/* 👆 OTWIERANIE / ZAMYKANIE PANELU */
 document.getElementById("handle").onclick = () => {
   document.getElementById("panel").classList.toggle("open");
 };
