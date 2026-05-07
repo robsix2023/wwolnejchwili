@@ -1,644 +1,522 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<title>W wolnej chwili</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<style>
-
-/* 🔧 RESET */
-* {
-  box-sizing: border-box;
-}
-
-body {
-margin: 0;
-  font-family: Inter, Arial, sans-serif;
-
-    background:
-    linear-gradient(to bottom, #f8fafc, #eef2f7);
-  overflow-x: hidden;
-  color: #111827;
-}
-
-/* 🔝 TOPBAR */
-.topbar {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  padding: 14px 20px;
-
-  background: rgba(255,255,255,0.92);
-
-  backdrop-filter: blur(16px);
-
-  position: sticky;
-  top: 0;
-
-  z-index: 1500;
-
-  border-bottom:
-    1px solid rgba(0,0,0,0.05);
-}
-
-/* 🔝 LOGO */
-.logo-wrapper {
-  flex-shrink: 0;
-}
-
-.logo {
-  width: clamp(140px, 20vw, 220px);
-
-  height: auto;
-
-  display: block;
-}
-
-/* 🧭 FILTRY */
-/* 🧭 FILTRY */
-#filters {
-  display: flex;
-  gap: 10px;
-
-  overflow-x: auto;
-
-  justify-content: center;
-
-  flex: 1;
-}
-
-/* 🔘 FILTR */
-.filter {
-  padding: 10px 14px;
-
-  background: rgba(255,255,255,0.75);
-
-  border-radius: 999px;
-
-  font-size: 13px;
-
-  white-space: nowrap;
-
-  flex-shrink: 0;
-
-  border: 1px solid rgba(0,0,0,0.05);
-
-  box-shadow:
-    0 2px 8px rgba(0,0,0,0.05);
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.filter:hover 
-  {
-  transform: translateY(-2px);
-
-  background: white;
-}
-  /* 🔽 PANEL FILTRÓW */
-#filterPanel {
-
-  width: calc(100% - 32px);
-
-  max-width: 900px;
-
-  margin: 0 auto;
-
-  max-height: 0;
-
-  overflow: hidden;
-
-  transition: 0.35s ease;
-
-}
-
-/* OTWARTY */
-#filterPanel.open {
-  max-height: 300px;
-
-  margin-top: 12px;
-}
-
-/* ZAWARTOŚĆ */
-.filterContent {
-
-  background:
-    rgba(255,255,255,0.82);
-
-  backdrop-filter: blur(18px);
-
-  border-radius: 28px;
-
-  padding: 18px;
-
-  border:
-    1px solid rgba(255,255,255,0.6);
-
-  box-shadow:
-    0 20px 50px rgba(0,0,0,0.10);
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 12px;
-}
-
-/* ITEM */
-.filterItem {
-
-  padding: 16px;
-
-  border-radius: 18px;
-
-  background:
-    rgba(255,255,255,0.7);
-
-  border:
-    1px solid rgba(0,0,0,0.05);
-
-  font-weight: 600;
-
-  transition: 0.2s;
-
-  cursor: pointer;
-}
-
-.filterItem:hover {
-
-  transform: translateY(-2px);
-
-  background: white;
-}
-/* 🗺️ MAPA */
-#map {
-  width: calc(100% - 32px);
-
-  margin: 16px auto 12px;
-
-  height: calc(100vh - 240px);
-
-  border-radius: 28px;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 12px 40px rgba(0,0,0,0.08);
-}
-
-/* 📦 PANEL */
-#panel {
-  position: fixed;
-  bottom: 90px;
-  left: 0;
-
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 120px;
-
-  background:
-    rgba(255,255,255,0.88);
-
-  backdrop-filter: blur(18px);
-
-  border-radius: 28px 28px 0 0;
-
-  box-shadow:
-    0 20px 50px rgba(0,0,0,0.18);
-
-  transition:
-  height 0.35s ease,
-  transform 0.35s ease;
-
-  overflow-y: auto;
-
-  z-index: 1000;
-
-  border-top:
-    1px solid rgba(255,255,255,0.6);
-}
-
-#panel.open {
-  height: 70vh;
-}
-
-/* 👆 UCHWYT */
-#handle {
-  width: 100%;
-  height: 32px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  position: sticky;
-  top: 0;
-
-  background:
-    rgba(255,255,255,0.9);
-
-  z-index: 5;
-}
-
-#handle::before {
-  content: "";
-
-  width: 44px;
-  height: 5px;
-
-  background: #cfcfcf;
-
-  border-radius: 999px;
-}
-
-#panelContent {
-  padding: 12px 16px 20px;
-
-  flex: 1;
-
-  overflow-y: auto;
-}
-
-#panel img {
-  width: 100%;
-  border-radius: 12px;
-  margin-top: 10px;
-}
-
-/* 🧩 PRZYCISKI */
-.btn {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  margin-top: 14px;
-
-  text-align: center;
-
-  background:
-    linear-gradient(
-      135deg,
-      #0f3d2e,
-      #1f6b52
-    );
-
-  color: white;
-
-  text-decoration: none;
-
-  border-radius: 16px;
-
-  font-weight: 600;
-
-  letter-spacing: 0.3px;
-
-  box-shadow:
-    0 8px 24px rgba(15,61,46,0.25);
-
-  transition: 0.2s;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-}
-
-/* 📄 SZCZEGÓŁY */
-#details {
-  display: none;
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  overflow-y: auto;
-  z-index: 2000;
-}
-
-#details header {
-  padding: 15px;
-  background: #f0f0f0;
-  position: sticky;
-  top: 0;
-}
-
-#details header button {
-  padding: 10px 14px;
-  border: none;
-  border-radius: 8px;
-  background: black;
-  color: white;
-}
-
-#detailsContent {
-  padding: 16px;
-}
-
-.gallery {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.gallery img {
-  width: 100%;
-  border-radius: 12px;
-}
-
-/* 💻 TABLET / LAPTOP */
-@media (min-width: 768px) {
-
- #map {
-   width: calc(100% - 32px);
-
-  margin: 16px auto;
-
-  height: calc(100vh - 170px);
-
-  border-radius: 28px;
-
-  overflow: hidden;
-
-  position: relative;
-  z-index: 1;
-
-  box-shadow:
-    0 12px 40px rgba(0,0,0,0.08);
-}
-
- 
-#panel {
-  position: fixed;
-
-  width: 420px;
-  max-width: 420px;
-
-  right: 20px;
-  left: auto;
-
-  bottom: 90px;
-
-  border-radius: 24px;
-}
-
-  #panel.open {
-    height: 70vh;
-  }
-
-  .gallery {
-    grid-template-columns: 1fr 1fr;
-  }
-
-}
-
-/* 🖥️ DUŻE EKRANY */
-  /* ⚪ STOPKA */
-#footer {
-  width: calc(100% - 32px);
-
-  margin: 0 auto 12px;
-
-  padding: 18px;
-
-  text-align: center;
-
-  background: white;
-
-  color: #6b7280;
-
-  font-size: 13px;
-
-  border-radius: 20px;
-
-  border-top:
-    1px solid rgba(0,0,0,0.06);
-
-  position: relative;
-
-  z-index: 2;
-}
-@media (min-width: 1200px) {
-
-  .logo {
-    max-width: 650px;
-  }
-
-}
-
-  #map {
-    height: calc(100vh - 240px);
-  }
-
-}
-
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W wolnej chwili</title>
+  <link rel="stylesheet" href="[unpkg.com](https://unpkg.com/leaflet/dist/leaflet.css)"/>
+
+  <style>
+    /* 🔧 RESET */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(to bottom, #f8fafc, #eef2f7);
+      overflow-x: hidden;
+      color: #111827;
+    }
+
+    /* 🔝 TOPBAR */
+    .topbar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 1500;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* 🔝 LOGO */
+    .logo-wrapper {
+      flex-shrink: 0;
+    }
+
+    .logo {
+      width: clamp(140px, 20vw, 220px);
+      height: auto;
+      display: block;
+    }
+
+    /* 🧭 FILTRY */
+    #filters {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      justify-content: center;
+      flex: 1;
+    }
+
+    /* 🔘 FILTR */
+    .filter {
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 999px;
+      font-size: 13px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .filter:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    .filter.active {
+      background: #0f3d2e;
+      color: white;
+    }
+
+    /* 🔽 PANEL FILTRÓW */
+    #filterPanel {
+      width: calc(100% - 32px);
+      max-width: 900px;
+      margin: 0 auto;
+      max-height: 0;
+      overflow: hidden;
+      transition: 0.35s ease;
+    }
+
+    #filterPanel.open {
+      max-height: 300px;
+      margin-top: 12px;
+    }
+
+    .filterContent {
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(18px);
+      border-radius: 28px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.10);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filterItem {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.05);
+      font-weight: 600;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .filterItem:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    /* 🗺️ MAPA */
+    #map {
+      width: calc(100% - 32px);
+      margin: 16px auto 12px;
+      height: calc(100vh - 240px);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    }
+
+    /* 📦 PANEL */
+    #panel {
+      position: fixed;
+      bottom: 90px;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 120px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(18px);
+      border-radius: 28px 28px 0 0;
+      box-shadow: 0 -4px 50px rgba(0,0,0,0.18);
+      transition: height 0.35s ease, transform 0.35s ease;
+      overflow: hidden;
+      z-index: 1000;
+      border-top: 1px solid rgba(255,255,255,0.6);
+    }
+
+    #panel.open {
+      height: 70vh;
+    }
+
+    /* 👆 UCHWYT */
+    #handle {
+      width: 100%;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.9);
+      z-index: 5;
+      flex-shrink: 0;
+    }
+
+    #handle::before {
+      content: "";
+      width: 44px;
+      height: 5px;
+      background: #cfcfcf;
+      border-radius: 999px;
+    }
+
+    #panelContent {
+      padding: 12px 16px 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    #panel img {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    /* 🧩 PRZYCISKI */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 14px;
+      text-align: center;
+      background: linear-gradient(135deg, #0f3d2e, #1f6b52);
+      color: white;
+      text-decoration: none;
+      border-radius: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow: 0 8px 24px rgba(15,61,46,0.25);
+      transition: 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* 📄 SZCZEGÓŁY */
+    #details {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      overflow-y: auto;
+      z-index: 2000;
+    }
+
+    #details header {
+      padding: 15px;
+      background: #f0f0f0;
+      position: sticky;
+      top: 0;
+    }
+
+    #details header button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: black;
+      color: white;
+      cursor: pointer;
+    }
+
+    #detailsContent {
+      padding: 16px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .gallery img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    /* ⚪ STOPKA */
+    #footer {
+      width: calc(100% - 32px);
+      margin: 0 auto 12px;
+      padding: 18px;
+      text-align: center;
+      background: white;
+      color: #6b7280;
+      font-size: 13px;
+      border-radius: 20px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* 💻 TABLET / LAPTOP */
+    @media (min-width: 768px) {
+      #map {
+        width: calc(100% - 32px);
+        margin: 16px auto;
+        height: calc(100vh - 170px);
+        border-radius: 28px;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+      }
+
+      #panel {
+        position: fixed;
+        width: 420px;
+        max-width: 420px;
+        right: 20px;
+        left: auto;
+        bottom: 90px;
+        border-radius: 24px;
+      }
+
+      #panel.open {
+        height: 70vh;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* 🖥️ DUŻE EKRANY */
+    @media (min-width: 1200px) {
+      .logo {
+        max-width: 650px;
+      }
+
+      #map {
+        height: calc(100vh - 200px);
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- 🔝 TOP BAR -->
-<div class="topbar">
-
-  <!-- LOGO -->
-  <div class="logo-wrapper">
-    <img src="logo.svg" alt="W wolnej chwili" class="logo">
-  </div>
-
-  <!-- FILTRY -->
-  <div id="filters">
-
-    <div class="filter">🚴 Rower</div>
-
-    <div class="filter">🏃 Bieganie</div>
-
-    <div class="filter">👶 Z dzieckiem</div>
-
-  </div>
-
-</div>
-
-<!-- 🔽 PANEL FILTRA -->
-<div id="filterPanel">
-
-  <div class="filterContent">
-
-    <div class="filterItem">item1</div>
-
-    <div class="filterItem">item2</div>
-
-    <div class="filterItem">item3</div>
-
-  </div>
-
-</div>
-  <!-- FILTRY -->
-<div id="filters">
-
-  <div class="filter">🚴 Rower</div>
-
-  <div class="filter">🏃 Bieganie</div>
-
-  <div class="filter">👶 Z dzieckiem</div>
-
-</div>
-
-<!-- 🗺️ MAPA -->
-<div id="map"></div>
-
-<!-- 📦 PANEL -->
-<div id="panel">
-  <div id="handle"></div>
-
-  <div id="panelContent">
-    <p>Kliknij trasę na mapie</p>
-  </div>
-</div>
-
-<!-- 📄 SZCZEGÓŁY -->
-<div id="details">
-
-  <header>
-    <button onclick="closeDetails()">⬅ Wróć</button>
-  </header>
-
-  <div id="detailsContent">
-
-    <h2>Nazwa trasy</h2>
-
-    <p>
-      📏 42 km <br>
-      ⛰️ 240 m przewyższenia
-    </p>
-
-    <div class="gallery">
-      <img src="https://picsum.photos/600/400">
-      <img src="https://picsum.photos/601/400">
+  <!-- 🔝 TOP BAR -->
+  <div class="topbar">
+    <div class="logo-wrapper">
+      <img src="logo.svg" alt="W wolnej chwili" class="logo">
     </div>
 
-    <p>
-      Tutaj będzie opis trasy.
-      Możesz wkleić informacje o atrakcjach,
-      nawierzchni, rodzinnych miejscach,
-      punktach widokowych itd.
-    </p>
-
-    <a class="btn">Pobierz GPX</a>
-
+    <div id="filters">
+      <div class="filter" data-category="rower">🚴 Rower</div>
+      <div class="filter" data-category="bieganie">🏃 Bieganie</div>
+      <div class="filter" data-category="dziecko">👶 Z dzieckiem</div>
+    </div>
   </div>
 
-</div>
+  <!-- 🔽 PANEL FILTRA -->
+  <div id="filterPanel">
+    <div class="filterContent">
+      <div class="filterItem">Szlaki łatwe</div>
+      <div class="filterItem">Szlaki średnie</div>
+      <div class="filterItem">Szlaki trudne</div>
+    </div>
+  </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- 🗺️ MAPA -->
+  <div id="map"></div>
 
-<script>
+  <!-- 📦 PANEL -->
+  <div id="panel">
+    <div id="handle"></div>
+    <div id="panelContent">
+      <p>Kliknij trasę na mapie</p>
+    </div>
+  </div>
 
-/* 🗺️ START MAPY */
-var map = L.map('map').setView([50.06, 19.94], 10);
+  <!-- 📄 SZCZEGÓŁY -->
+  <div id="details">
+    <header>
+      <button onclick="closeDetails()">⬅ Wróć</button>
+    </header>
+    <div id="detailsContent">
+      <h2>Nazwa trasy</h2>
+      <p>
+        📏 42 km <br>
+        ⛰️ 240 m przewyższenia
+      </p>
+      <div class="gallery">
+        <img src="[picsum.photos](https://picsum.photos/600/400)" alt="Zdjęcie trasy">
+        <img src="[picsum.photos](https://picsum.photos/601/400)" alt="Zdjęcie trasy">
+      </div>
+      <p>
+        Tutaj będzie opis trasy.
+        Możesz wkleić informacje o atrakcjach,
+        nawierzchni, rodzinnych miejscach,
+        punktach widokowych itd.
+      </p>
+      <a href="#" class="btn" id="downloadGpx">Pobierz GPX</a>
+    </div>
+  </div>
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-.addTo(map);
+  <!-- ⚪ STOPKA -->
+  <footer id="footer">
+    © 2026 W wolnej chwili — Wszelkie prawa zastrzeżone
+  </footer>
 
-/* 🔥 DANE TRAS */
-const trasy = [
-  {
-    name: "Puszcza Niepołomicka",
-    lat: 50.05,
-    lng: 20.22,
-    km: 42,
-    elevation: 240,
-    img: "https://picsum.photos/600/300"
-  }
-];
+  <script src="[unpkg.com](https://unpkg.com/leaflet/dist/leaflet.js)"></script>
+  <script>
+    /* 🗺️ START MAPY */
+    const map = L.map('map').setView([50.06, 19.94], 10);
 
-/* 📍 MARKERY */
-trasy.forEach(t => {
+    L.tileLayer('[{s}.tile.openstreetmap.org](https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png)', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-  let marker = L.marker([t.lat, t.lng]).addTo(map);
+    /* 🔥 DANE TRAS */
+    const trasy = [
+      {
+        name: "Puszcza Niepołomicka",
+        lat: 50.05,
+        lng: 20.22,
+        km: 42,
+        elevation: 240,
+        img: "[picsum.photos](https://picsum.photos/600/300)",
+        category: "rower"
+      },
+      {
+        name: "Szlak nad Wisłą",
+        lat: 50.06,
+        lng: 19.94,
+        km: 15,
+        elevation: 50,
+        img: "[picsum.photos](https://picsum.photos/600/301)",
+        category: "bieganie"
+      }
+    ];
 
-  marker.on('click', () => {
-    showPanel(t);
-  });
+    let markers = [];
 
-});
+    /* 📍 MARKERY */
+    function renderMarkers(filteredTrasy) {
+      // Usuń stare markery
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
 
-/* 📦 PANEL */
-function showPanel(t) {
+      filteredTrasy.forEach(t => {
+        const marker = L.marker([t.lat, t.lng]).addTo(map);
+        marker.on('click', () => showPanel(t));
+        markers.push(marker);
+      });
+    }
 
-  const panel = document.getElementById("panel");
-  const content = document.getElementById("panelContent");
+    renderMarkers(trasy);
 
-  content.innerHTML = `
-    <h3>${t.name}</h3>
+    /* 📦 PANEL */
+    function showPanel(t) {
+      const panel = document.getElementById("panel");
+      const content = document.getElementById("panelContent");
 
-    <p>
-      📏 ${t.km} km <br>
-      ⛰️ ${t.elevation} m
-    </p>
+      content.innerHTML = `
+        <h3>${t.name}</h3>
+        <p>
+          📏 ${t.km} km <br>
+          ⛰️ ${t.elevation} m
+        </p>
+        <img src="${t.img}" alt="${t.name}">
+        <button class="btn" onclick="openDetails()">Zobacz szczegóły</button>
+      `;
 
-    <img src="${t.img}">
+      panel.classList.add("open");
+    }
 
-    <a class="btn" onclick="openDetails()">
-      Zobacz szczegóły
-    </a>
-  `;
+    /* 📄 OTWÓRZ SZCZEGÓŁY */
+    function openDetails() {
+      document.getElementById("details").style.display = "block";
+      document.body.style.overflow = "hidden";
+    }
 
-  panel.classList.add("open");
+    /* ❌ ZAMKNIJ SZCZEGÓŁY */
+    function closeDetails() {
+      document.getElementById("details").style.display = "none";
+      document.body.style.overflow = "";
+    }
 
-}
+    /* 👆 PANEL - kliknięcie i dotyk */
+    const panel = document.getElementById("panel");
+    const handle = document.getElementById("handle");
 
-/* 📄 OTWÓRZ SZCZEGÓŁY */
-function openDetails() {
-  document.getElementById("details").style.display = "block";
-}
+    handle.addEventListener("click", () => {
+      panel.classList.toggle("open");
+    });
 
-/* ❌ ZAMKNIJ SZCZEGÓŁY */
-function closeDetails() {
-  document.getElementById("details").style.display = "none";
-}
-/* 👆 PANEL */
-const panel = document.getElementById("panel");
-const handle = document.getElementById("handle");
+    // Obsługa gestu swipe
+    let startY = 0;
+    let currentY = 0;
 
-/* kliknięcie */
-handle.addEventListener("click", () => {
+    handle.addEventListener("touchstart", (e) => {
+      startY = e.touches[0].clientY;
+    });
 
-  panel.classList.toggle("open");
+    handle.addEventListener("touchmove", (e) => {
+      currentY = e.touches[0].clientY;
+    });
 
-});
-/* 🔽 PANEL FILTRÓW */
+    handle.addEventListener("touchend", () => {
+      const diff = startY - currentY;
+      if (diff > 50) {
+        panel.classList.add("open");
+      } else if (diff < -50) {
+        panel.classList.remove("open");
+      }
+    });
 
-const filters = document.querySelectorAll(".filter");
+    /* 🔽 FILTRY */
+    const filters = document.querySelectorAll(".filter");
+    let activeFilter = null;
 
-filters.forEach(filter => {
+    filters.forEach(filter => {
+      filter.addEventListener("click", () => {
+        const category = filter.dataset.category;
 
-  filter.addEventListener("click", () => {
+        // Toggle aktywnego filtra
+        if (activeFilter === category) {
+          activeFilter = null;
+          filter.classList.remove("active");
+          renderMarkers(trasy);
+        } else {
+          // Usuń aktywność ze wszystkich
+          filters.forEach(f => f.classList.remove("active"));
+          filter.classList.add("active");
+          activeFilter = category;
 
-    document
-      .getElementById("filterPanel")
-      .classList
-      .toggle("open");
+          // Filtruj trasy
+          const filtered = trasy.filter(t => t.category === category);
+          renderMarkers(filtered);
+        }
 
-  });
-
-});
- 
-
-</script>
-<!-- ⚪ STOPKA -->
-<footer id="footer">
-  © 2026 W wolnej chwili — Wszelkie prawa zastrzeżone
-</footer>
+        // Toggle panelu filtrów
+        document.getElementById("filterPanel").classList.toggle("open");
+      });
+    });
+  </script>
 
 </body>
 </html>
