@@ -22,20 +22,37 @@ margin: 0;
   color: #111827;
 }
 
-/* 🔝 LOGO WRAPPER */
-.logo-wrapper {
+/* 🔝 TOPBAR */
+.topbar {
   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: white;
-  padding: 20px 16px 10px;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 14px 20px;
+
+  background: rgba(255,255,255,0.92);
+
+  backdrop-filter: blur(16px);
+
+  position: sticky;
+  top: 0;
+
+  z-index: 1500;
+
+  border-bottom:
+    1px solid rgba(0,0,0,0.05);
 }
 
-/* 🖼️ LOGO */
+/* 🔝 LOGO */
+.logo-wrapper {
+  flex-shrink: 0;
+}
+
 .logo {
-  width: 100%;
-  max-width: 500px;
+  width: 220px;
   height: auto;
   display: block;
 }
@@ -43,35 +60,28 @@ margin: 0;
 /* 🧭 FILTRY */
 #filters {
   display: flex;
-  gap: 8px;
-  padding: 10px 16px;
-  justify-content: center;
-  background: white;
+  gap: 10px;
+
   overflow-x: auto;
-}
 
-.filter {
-  padding: 10px 14px;
-  background: rgba(255,255,255,0.8);
-  border-radius: 999px;
-  font-size: 13px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.5);
-  box-shadow:
-    0 2px 6px rgba(0,0,0,0.06);
-  transition: 0.2s;
-}
+  justify-content: flex-end;
 
-.filter:hover {
-  transform: translateY(-1px);
+  flex: 1;
 }
-
 /* 🗺️ MAPA */
 #map {
-  width: 100%;
-  height: 55vh;
+  width: calc(100% - 32px);
+
+  margin: 16px auto;
+
+  height: calc(100vh - 220px);
+
+  border-radius: 28px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.08);
 }
 
 /* 📦 PANEL */
@@ -108,11 +118,33 @@ margin: 0;
 
 /* 👆 UCHWYT */
 #handle {
-  width: 40px;
+  width: 100%;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  position: sticky;
+  top: 0;
+
+  background:
+    rgba(255,255,255,0.9);
+
+  z-index: 5;
+}
+
+#handle::before {
+  content: "";
+
+  width: 44px;
   height: 5px;
-  background: #ccc;
-  border-radius: 10px;
-  margin: 10px auto;
+
+  background: #cfcfcf;
+
+  border-radius: 999px;
 }
 
 #panelContent {
@@ -249,16 +281,21 @@ margin: 0;
 
 <body>
 
-<!-- 🔝 LOGO SVG -->
-<div class="logo-wrapper">
-  <img src="logo.svg" alt="W wolnej chwili" class="logo">
-</div>
+<!-- 🔝 TOP BAR -->
+<div class="topbar">
 
-<!-- 🧭 FILTRY -->
-<div id="filters">
-  <div class="filter">🚴 Rower</div>
-  <div class="filter">🏃 Bieganie</div>
-  <div class="filter">👶 Z dzieckiem</div>
+  <!-- LOGO -->
+  <div class="logo-wrapper">
+    <img src="logo.svg" alt="W wolnej chwili" class="logo">
+  </div>
+
+  <!-- FILTRY -->
+  <div id="filters">
+    <div class="filter">🚴 Rower</div>
+    <div class="filter">🏃 Bieganie</div>
+    <div class="filter">👶 Z dzieckiem</div>
+  </div>
+
 </div>
 
 <!-- 🗺️ MAPA -->
@@ -376,11 +413,38 @@ function closeDetails() {
 }
 
 /* 👆 OTWIERANIE / ZAMYKANIE PANELU */
-document.getElementById("handle").onclick = () => {
-  document.getElementById("panel").classList.toggle("open");
-};
+document.getElementById("panel").addEventListener("click", function(e) {
+
+  // nie zamykaj po kliknięciu przycisku
+  if (e.target.classList.contains("btn")) {
+    return;
+  }
+
+  this.classList.toggle("open");
+
+});
 
 </script>
+<!-- ⚪ STOPKA -->
+<footer id="footer">
+  © 2026 W wolnej chwili — Wszelkie prawa zastrzeżone
+</footer>
+  /* ⚪ STOPKA */
+#footer {
+  width: 100%;
 
+  padding: 18px;
+
+  text-align: center;
+
+  background: white;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+  border-top:
+    1px solid rgba(0,0,0,0.06);
+}
 </body>
 </html>
