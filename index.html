@@ -62,8 +62,20 @@ margin: 0;
 }
 
 /* 🧭 FILTRY */
+/* 🧭 FILTRY */
 #filters {
-  .filter {
+  display: flex;
+  gap: 10px;
+
+  overflow-x: auto;
+
+  justify-content: flex-end;
+
+  flex: 1;
+}
+
+/* 🔘 FILTR */
+.filter {
   padding: 10px 14px;
 
   background: rgba(255,255,255,0.75);
@@ -76,8 +88,7 @@ margin: 0;
 
   flex-shrink: 0;
 
-  border:
-    1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.05);
 
   box-shadow:
     0 2px 8px rgba(0,0,0,0.05);
@@ -92,22 +103,13 @@ margin: 0;
 
   background: white;
 }
-  display: flex;
-  gap: 10px;
-
-  overflow-x: auto;
-
-  justify-content: flex-end;
-
-  flex: 1;
-}
 /* 🗺️ MAPA */
 #map {
   width: calc(100% - 32px);
 
   margin: 16px auto;
 
-  height: calc(100vh - 220px);
+  height: calc(100vh - 170px);
 
   border-radius: 28px;
 
@@ -120,7 +122,7 @@ margin: 0;
 /* 📦 PANEL */
 #panel {
   position: fixed;
-  bottom: 0;
+  bottom: 12px;
   left: 0;
   width: 100%;
   height: 120px;
@@ -272,15 +274,21 @@ margin: 0;
 @media (min-width: 768px) {
 
  #map {
-  width: calc(100% - 40px);
+   width: calc(100% - 32px);
 
-  margin: 20px auto;
+  margin: 16px auto;
 
-  height: calc(100vh - 180px);
+  height: calc(100vh - 170px);
 
-  border-radius: 32px;
+  border-radius: 28px;
 
   overflow: hidden;
+
+  position: relative;
+  z-index: 1;
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.08);
 }
 
   #panel {
@@ -478,15 +486,16 @@ document.getElementById("handle").addEventListener("click", function() {
     .toggle("open");
 
 });
+/* 👆 OTWIERANIE / ZAMYKANIE PANELU */
+document.getElementById("handle").addEventListener("click", function() {
 
-  // nie zamykaj po kliknięciu przycisku
-  if (e.target.classList.contains("btn")) {
-    return;
-  }
-
-  this.classList.toggle("open");
+  document
+    .getElementById("panel")
+    .classList
+    .toggle("open");
 
 });
+ 
 
 </script>
 <!-- ⚪ STOPKA -->
