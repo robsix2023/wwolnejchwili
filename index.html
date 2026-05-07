@@ -16,6 +16,8 @@
 body {
 margin: 0;
   font-family: Inter, Arial, sans-serif;
+
+  padding-bottom: 80px;
   background:
     linear-gradient(to bottom, #f8fafc, #eef2f7);
   overflow-x: hidden;
@@ -52,13 +54,44 @@ margin: 0;
 }
 
 .logo {
-  width: 220px;
+  width: clamp(140px, 20vw, 220px);
+
   height: auto;
+
   display: block;
 }
 
 /* 🧭 FILTRY */
 #filters {
+  .filter {
+  padding: 10px 14px;
+
+  background: rgba(255,255,255,0.75);
+
+  border-radius: 999px;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+
+  border:
+    1px solid rgba(0,0,0,0.05);
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.05);
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.filter:hover {
+  transform: translateY(-2px);
+
+  background: white;
+}
   display: flex;
   gap: 10px;
 
@@ -238,10 +271,15 @@ margin: 0;
 /* 💻 TABLET / LAPTOP */
 @media (min-width: 768px) {
 
-  #map {
-  width: 100%;
-  height: 55vh;
-  border-radius: 28px 28px 0 0;
+ #map {
+  width: calc(100% - 40px);
+
+  margin: 20px auto;
+
+  height: calc(100vh - 180px);
+
+  border-radius: 32px;
+
   overflow: hidden;
 }
 
@@ -264,6 +302,25 @@ margin: 0;
 }
 
 /* 🖥️ DUŻE EKRANY */
+  /* ⚪ STOPKA */
+#footer {
+  width: 100%;
+
+  padding: 18px;
+
+  text-align: center;
+
+  background: white;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+  border-top:
+    1px solid rgba(0,0,0,0.06);
+
+  margin-top: 20px;
+}
 @media (min-width: 1200px) {
 
   .logo {
@@ -413,7 +470,14 @@ function closeDetails() {
 }
 
 /* 👆 OTWIERANIE / ZAMYKANIE PANELU */
-document.getElementById("panel").addEventListener("click", function(e) {
+document.getElementById("handle").addEventListener("click", function() {
+
+  document
+    .getElementById("panel")
+    .classList
+    .toggle("open");
+
+});
 
   // nie zamykaj po kliknięciu przycisku
   if (e.target.classList.contains("btn")) {
@@ -429,22 +493,6 @@ document.getElementById("panel").addEventListener("click", function(e) {
 <footer id="footer">
   © 2026 W wolnej chwili — Wszelkie prawa zastrzeżone
 </footer>
-  /* ⚪ STOPKA */
-#footer {
-  width: 100%;
 
-  padding: 18px;
-
-  text-align: center;
-
-  background: white;
-
-  color: #6b7280;
-
-  font-size: 13px;
-
-  border-top:
-    1px solid rgba(0,0,0,0.06);
-}
 </body>
 </html>
