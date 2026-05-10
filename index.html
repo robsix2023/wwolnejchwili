@@ -495,9 +495,25 @@
     /* 🗺️ START MAPY */
     const map = L.map('map').setView([50.06, 19.94], 10);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+/* 🗺️ MAPA PODSTAWOWA */
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+  attribution: '© OpenStreetMap contributors'
+
+}).addTo(map);
+
+/* 🚴 SZLAKI ROWEROWE */
+L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+
+  attribution: 'CyclOSM'
+  /* 🥾 SZLAKI TURYSTYCZNE */
+L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', {
+
+  attribution: 'Waymarked Trails'
+
+}).addTo(map);
+
+}).addTo(map);
 
     /* 🔥 DANE TRAS */
     const trasy = [
