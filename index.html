@@ -521,7 +521,11 @@ const map = L.map('map').setView([50.06, 19.94], 10);
 
 /* 🗺️ DOMYŚLNA MAPA */
 const standardMap = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}.png',
+  {
+    attribution: '© Stadia Maps © OpenMapTiles © OpenStreetMap contributors'
+  }
+).addTo(map);
   {
     attribution: '© OpenStreetMap contributors'
   }
