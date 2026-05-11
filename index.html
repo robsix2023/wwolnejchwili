@@ -521,47 +521,38 @@ const map = L.map('map').setView([50.06, 19.94], 10);
 
 /* 🗺️ DOMYŚLNA MAPA */
 const standardMap = L.tileLayer(
-  'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}.png',
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
-    attribution: '© Stadia Maps © OpenMapTiles © OpenStreetMap contributors'
+    attribution: '© OpenStreetMap contributors'
   }
 ).addTo(map);
 
-/* 🚴 TRASY ROWEROWE */
-const cyclingLayer = L.layerGroup([
-  L.tileLayer(
-    'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-    {
-      attribution: '© CyclOSM'
-    }
-  ),
-
-  L.tileLayer(
-    'https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png',
-    {
-      attribution: '© Waymarked Trails'
-    }
-  )
-]);
+/* 🚴 MAPA ROWEROWA */
+const cyclingMap = L.tileLayer(
+  'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+  {
+    attribution: '© CyclOSM'
+  }
+);
 
 /* 🛰️ SATELITA */
-const satelliteLayer = L.tileLayer(
+const satelliteMap = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {
     attribution: '© Esri'
   }
 );
 
-/* 🔘 WARSTWY */
-const overlays = {
-  "🚴 Trasy rowerowe": cyclingLayer,
-  "🛰️ Satelita": satelliteLayer
-};
+/* 🎛️ WYBÓR WARSTW */
+L.control.layers(
+  {
+    "Domyślna": standardMap,
+    "🚴 Rowerowa": cyclingMap,
+    "🛰️ Satelita": satelliteMap
+  }
+).addTo(map);
 
-/* 📦 PANEL WARSTW */
-L.control.layers(null, overlays, {
-  position: 'bottomleft'
-}).addTo(map);
+
     /* 🔥 DANE TRAS */
     const trasy = [
       {
